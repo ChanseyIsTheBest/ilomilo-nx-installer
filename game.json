@@ -14,6 +14,10 @@
     ".*"
   ],
   "skip": [],
+  "opcm": {
+    "match": "data/sound/xbox/startup\\.xwb",
+    "bitrate": 128000
+  },
   "audio": {
     "match": "data/sound/xbox/.*\\.xwb",
     "container": "xact",
