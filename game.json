@@ -1,0 +1,39 @@
+{
+  "title": "ilomilo",
+  "package": "ilomilo-nx",
+  "nro": "ilomilo-nx.nro",
+  "shaders": true,
+  "asis": [
+    "default\\.xex",
+    "default\\.xexp",
+    ".*\\.par",
+    ".*\\.xwb",
+    ".*\\.wmv"
+  ],
+  "min_pack_size": 4096,
+  "lz4": [
+    ".*\\.dds",
+    ".*\\.ttf",
+    ".*\\.pca"
+  ],
+  "skip": [],
+  "needs": [
+    "data/startup\\.par",
+    "data/arch0\\.par",
+    "data/arch1\\.par",
+    "data/arch2\\.par",
+    "data/arch3\\.par",
+    "data/archcache\\.pca"
+  ],
+  "dlc": true,
+  "update": {
+    "title": "Title Update #1"
+  },
+  "texts": {
+    "game": "The game's Xbox Live Arcade package (the <code>LIVE</code> file from <code>58410A1B/000D0000/</code>), or the folder it was extracted to (with <code>default.xex</code> and <code>Data/</code>).",
+    "update": "ilomilo Title Update #1 (the <code>LIVE</code> file of content type <code>000B0000</code>, often in a folder named <code>2F5D19C7</code>), or the folder it was extracted to (with <code>default.xexp</code>): this port is recompiled from the update's code, so it is needed.",
+    "dlc": "The \"autumn tale\" downloadable content, as the Xbox 360 package you have (a <code>LIVE</code> file of content type <code>00000002</code>), or a folder of them. The game reads it in place from <code>dlc/</code>.",
+    "settings": "The game writes its settings file, <code>ilomilo.toml</code>, at its first start.",
+    "footer": "ilomilo is a trademark of Microsoft. Not affiliated with or endorsed by Microsoft, SouthEnd Interactive or Nintendo."
+  }
+}
