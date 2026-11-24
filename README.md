@@ -1,4 +1,4 @@
-﻿# ilomilo-nx-installer
+# ilomilo-nx-installer
 
 The web installer of ilomilo-nx (ilomilo on the Nintendo Switch, recompiled from Title Update #1's code), a copy of
 renut_nx_ultimate_installer with ilomilo's `game.json`, its icon and its `release/`. The player chooses their own
