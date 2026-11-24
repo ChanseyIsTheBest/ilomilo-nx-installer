@@ -112,6 +112,50 @@ def check_xmop(z, entry, original):
         os.remove(temp)
 
 
+def check_opcm(z, entry, original):
+    """ilomilo-nx-installer (2026-11-25): NAME.opcm (or NAME.opcm.lz4b) against NAME, lib/opcm.js's format: the header
+    (RXOPCM01, version 1, the original's size), the segments covering the original from 0 to its end in order, every
+    stored segment (kind 0: the bytes outside the samples) equal to the original's, every sample segment (kind 1) in a
+    stream that exists, and each stream's packet table and packets inside the file. The samples are Opus (lossy): not
+    compared."""
+    if entry.endswith('.lz4b'):
+        fd, temp = tempfile.mkstemp(suffix='.opcm')
+        try:
+            with os.fdopen(fd, 'wb') as out:
+                unpack_lz4b(z, z.getinfo(entry), out)
+            data = open(temp, 'rb').read()
+        finally:
+            os.remove(temp)
+    else:
+        data = z.read(entry)
+    orig = open(original, 'rb').read()
+    assert data[:8] == b'RXOPCM01', 'not an RXOPCM01 file'
+    version, streams, size, nsegs = struct.unpack_from('<IIQI', data, 8)
+    seg_off, str_off, stored_off, stored_len = struct.unpack_from('<QQQQ', data, 32)
+    assert version == 1, f'version {version}'
+    assert size == len(orig), f'holds {size} bytes, the original has {len(orig)}'
+    assert stored_off + stored_len <= len(data), 'the stored bytes run past the file'
+    at = 0
+    for i in range(nsegs):
+        off, length, kind, stream, src = struct.unpack_from('<QQIIQ', data, seg_off + 32 * i)
+        assert off == at, f'segment {i} starts at {off}, not {at}'
+        if kind == 0:
+            assert src + length <= stored_len, f'segment {i} reads past the stored bytes'
+            assert data[stored_off + src:stored_off + src + length] == orig[off:off + length], \
+                f'segment {i} ({length} bytes at {off}) differs from the original'
+        else:
+            assert kind == 1 and stream < streams, f'segment {i}: kind {kind}, stream {stream}'
+        at = off + length
+    assert at == size, f'the segments end at {at}, not {size}'
+    for s in range(streams):
+        channels, bits, rate, big, pre_skip, frames, n, frame, sizes_off, pk_off = struct.unpack_from(
+            '<HHIIIQIIQQ', data, str_off + 48 * s)
+        assert channels in (1, 2, 6) and bits == 16 and frames > 0 and n > 0, f'stream {s}: {channels} ch, {frames} frames'
+        sizes = struct.unpack_from(f'<{n}H', data, sizes_off)
+        assert pk_off + sum(sizes) <= len(data), f'stream {s}: its packets run past the file'
+    return streams
+
+
 def file_sha(path):
     h = hashlib.sha256()
     with open(path, 'rb') as f:
@@ -160,7 +204,8 @@ def main():
     root = f'switch/{cfg["package"]}/'
     movies = (cfg.get('movies') or {}).get('match')
     audio = (cfg.get('audio') or {}).get('match')
-    reencoded = {'hevc': [0, 0], 'xmop': [0, 0]}
+    opcm = (cfg.get('opcm') or {}).get('match')  # ilomilo-nx-installer (2026-11-25): lib/opcm.js's NAME.opcm
+    reencoded = {'hevc': [0, 0], 'xmop': [0, 0], 'opcm': [0, 0]}
     skip_res = [re.compile(f'^(?:{p})$', re.I) for p in cfg.get('skip', [])]
     with zipfile.ZipFile(zip_path) as z:
         bad = z.testzip()
@@ -223,6 +268,19 @@ def main():
                             raise SystemExit(f'FAIL: {found[0]}: {e}')
                         reencoded['xmop'][0] += size_o
                         reencoded['xmop'][1] += z.getinfo(found[0]).file_size
+                        continue
+                if opcm and fits([opcm], rel):
+                    found = [e for e in (entry + '.opcm.lz4b', entry + '.opcm') if e in names]
+                    if found:
+                        if entry in names or entry + '.lz4b' in names:
+                            raise SystemExit(f'FAIL: {rel} is in the zip both re-encoded and as it is')
+                        try:
+                            streams = check_opcm(z, found[0], original)
+                        except (AssertionError, struct.error) as e:
+                            raise SystemExit(f'FAIL: {found[0]}: {e}')
+                        reencoded['opcm'][0] += size_o
+                        reencoded['opcm'][1] += z.getinfo(found[0]).file_size
+                        print(f'{found[0]}: {streams} streams, every byte outside the samples equal to {rel}')
                         continue
                 if movies and fits([movies], rel) and entry + '.lz4b' in names:
                     held = lz4b_header(z, z.getinfo(entry + '.lz4b'))[3]
