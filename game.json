@@ -7,16 +7,48 @@
     "default\\.xex",
     "default\\.xexp",
     ".*\\.par",
-    ".*\\.xwb",
-    ".*\\.wmv"
+    ".*\\.png"
   ],
   "min_pack_size": 4096,
   "lz4": [
-    ".*\\.dds",
-    ".*\\.ttf",
-    ".*\\.pca"
+    ".*"
   ],
   "skip": [],
+  "audio": {
+    "match": "data/sound/xbox/.*\\.xwb",
+    "container": "xact",
+    "bitrates": [
+      {
+        "match": "data/sound/xbox/music\\.xwb",
+        "stereo": 128000,
+        "mono": 64000
+      },
+      {
+        "match": ".*",
+        "stereo": 96000,
+        "mono": 48000
+      }
+    ],
+    "rates": {
+      "48000": 48000,
+      "44100": 48000,
+      "24000": 24000,
+      "22050": 24000
+    },
+    "near_hz": 1700,
+    "ids": {
+      "top": 105,
+      "pack_bits": 8
+    },
+    "pack": "lz4",
+    "min_saving": 0.05
+  },
+  "movies": {
+    "match": "data/media/.*\\.wmv",
+    "fraction": 0.35,
+    "gop": 120,
+    "zxc": true
+  },
   "needs": [
     "data/startup\\.par",
     "data/arch0\\.par",
@@ -35,5 +67,10 @@
     "dlc": "The \"autumn tale\" downloadable content, as the Xbox 360 package you have (a <code>LIVE</code> file of content type <code>00000002</code>), or a folder of them. The game reads it in place from <code>dlc/</code>.",
     "settings": "The game writes its settings file, <code>ilomilo.toml</code>, at its first start.",
     "footer": "ilomilo is a trademark of Microsoft. Not affiliated with or endorsed by Microsoft, SouthEnd Interactive or Nintendo."
-  }
+  },
+  "zxc": [
+    ".*\\.ttf",
+    "data/sound/xbox/startup\\.xwb",
+    "data/media/.*\\.wmv"
+  ]
 }
