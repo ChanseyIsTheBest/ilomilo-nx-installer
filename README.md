@@ -7,6 +7,11 @@ makes the SD card's `switch/ilomilo-nx/` folder from them in the browser (the ga
 with the update applied, 135 from `Data/startup.par`'s effects, a ZIP archive: the new `deflate_raw` coding of
 `lib/sources.js`). Nothing of the game is in this repository.
 
+**Use it:** https://chanseyisthebest.github.io/ilomilo-nx-installer/ (release 1.0.0, the NRO of
+[ilomilo-nx 1.0.0](https://github.com/ChanseyIsTheBest/ilomilo-nx/releases/tag/v1.0.0)). Besides the template's options
+it has one of its own (`game.json` "leave_out", ticked by default): the trial's upsell movie (`Data/media/upsell.wmv`,
+35 MB) is left out of the package, since it plays only on the trial's buy screens and the port runs the full game.
+
 The rest of this page is the template's.
 
 ---
