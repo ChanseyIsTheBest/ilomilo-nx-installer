@@ -207,6 +207,9 @@ def main():
     opcm = (cfg.get('opcm') or {}).get('match')  # ilomilo-nx-installer (2026-11-25): lib/opcm.js's NAME.opcm
     reencoded = {'hevc': [0, 0], 'xmop': [0, 0], 'opcm': [0, 0]}
     skip_res = [re.compile(f'^(?:{p})$', re.I) for p in cfg.get('skip', [])]
+    # ilomilo-nx (2026-11-26): game.json "leave_out" (the page's box, ticked by default): its files may be absent
+    # (left out) or present (the box unticked); when present they are checked as any other.
+    leave_res = [re.compile(f'^(?:{(cfg.get("leave_out") or {}).get("match")})$', re.I)] if cfg.get('leave_out') else []
     with zipfile.ZipFile(zip_path) as z:
         bad = z.testzip()
         if bad:
@@ -253,6 +256,10 @@ def main():
                 if any(r.match(rel) for r in skip_res):
                     if root + 'game_root/' + rel in names and root + 'game_root/' + rel not in placed:
                         raise SystemExit(f'FAIL: {rel} should have been left out')
+                    continue
+                if any(r.match(rel) for r in leave_res) and not any(
+                        n.startswith(root + 'game_root/' + rel) for n in names):
+                    print(f'left out (game.json leave_out): {rel}')
                     continue
                 count += 1
                 entry = root + 'game_root/' + rel
