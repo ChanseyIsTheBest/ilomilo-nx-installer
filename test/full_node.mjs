@@ -2,6 +2,7 @@
 //   node test/full_node.mjs <game folder> <out.zip> [--dlc=<folder>] [--no-compile] [--threads=N] [--glsl-threads=N]
 //        [--native-glsl=<the port's glsl_opt folder>] [--reference] [--update=<the title update's package or folder>]
 //        [--opus] [--no-audio] [--no-movies]
+// --keep-unused (ilomilo-nx, 2026-11-26): keep game.json's "leave_out" files (the page's box unticked; left out by default).
 // --opus (2026-11-23): game.json's audio re-encoded with ffmpeg's libopus (test/opus_node.mjs; the page uses the
 // browser's encoder); without it Node has no Opus encoder and the sounds are packed as they are. The movies' H.265
 // needs the browser's VideoEncoder: Node keeps them as they are (ZXC-packed by game.json's zxc list).
@@ -117,7 +118,7 @@ else if (updateAt) {
 }
 const report = await buildPackage({
   game, manifest, files, dlc: dlcDir ? folderFiles(dlcDir) : [], update, fetchRelease, tools, sink, compile: !flag('no-compile'),
-  options: { movies: !flag('no-movies'), audio: !flag('no-audio') },
+  options: { movies: !flag('no-movies'), audio: !flag('no-audio'), leave_out: !flag('keep-unused') },
   events: {
     log: (t) => console.log(`${stamp()} ${t}`),
     progress: (f) => { const now = performance.now(); if (now - shown > 20000 || f === 1) { shown = now; console.log(`${stamp()} ${(100 * f).toFixed(0)} %`); } },

@@ -41,6 +41,8 @@ game.then((g) => {
   $('reencode-note').hidden = !g.movies && !g.audio;
   if (g.texts?.movies) $('movies-text').innerHTML = g.texts.movies;  // the game's figures, when game.json has them
   if (g.texts?.audio) $('audio-text').innerHTML = g.texts.audio;
+  $('leave-out-row').hidden = !g.leave_out;  // ilomilo-nx (2026-11-26): the trial's movie, left out by default
+  if (g.leave_out?.text) $('leave-out-text').innerHTML = g.leave_out.text;
   create.textContent = `Create ${g.package}.zip`;
   manifest.then((m) => { $('version').textContent = `version ${m.version}`; });
 });
@@ -337,7 +339,8 @@ create.addEventListener('click', async () => {
   };
   // 2026-11-23: the re-encodes the page offers (game.json "movies", "audio"; vivapinata-nx-installer's, the user there:
   // "Make sure you give option for user not to rencode as well")
-  const options = { movies: !!$('movies')?.checked, audio: !!$('audio')?.checked };
+  const options = { movies: !!$('movies')?.checked, audio: !!$('audio')?.checked,
+                    leave_out: $('leave-out') ? $('leave-out').checked : true };
   worker.postMessage({ entries, dlc, update: update || [], compile: compileBox.checked, options, port: channel.port1 },
                      [channel.port1]);
 });

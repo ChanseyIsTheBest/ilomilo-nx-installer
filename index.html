@@ -107,6 +107,9 @@
       <span id="movies-text">Re-encode the movies to H.265 (recommended: the Switch's video hardware plays them). Needs a
         browser with an H.265 encoder (Chrome or Edge on a recent graphics card); without one, or unticked, the original
         movies are kept.</span></label>
+    <!-- 2026-11-26 (ilomilo-nx, the user: "give an option to exclude the trial video"): game.json "leave_out" -->
+    <label class="option" id="leave-out-row" hidden><input id="leave-out" type="checkbox" checked>
+      <span id="leave-out-text">Leave out the files this port never uses (recommended).</span></label>
     <button id="create" class="primary" disabled>Create the zip</button>
     <p class="note">The shaders are made from your game's own files on all of this computer's cores, and the game's files
       are packed on all of them with LZ4 or ZXC (the game reads them as they were). The zip downloads while it is

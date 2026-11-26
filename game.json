@@ -53,6 +53,10 @@
     "gop": 120,
     "zxc": true
   },
+  "leave_out": {
+    "match": "data/media/.*\\.wmv",
+    "text": "Leave out the trial's upsell movie (<code>upsell.wmv</code>, 35 MB; recommended): it plays only on the trial's buy screens, and this port runs the full game. Unticked, it is kept (and re-encoded with the movies option above)."
+  },
   "needs": [
     "data/startup\\.par",
     "data/arch0\\.par",
